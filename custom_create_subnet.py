@@ -1,3 +1,4 @@
+# By MuZakkir Saifi
 # import logging for get the logs in  execution
 import logging
 # import the boto3 which will use to interact  with the aws
@@ -5,6 +6,8 @@ import boto3
 from botocore.exceptions import ClientError
 
 REGION = input("Please enter the REGION: ")
+Tag=input("Enter the tag name: ")
+Tag_Value=input("Enter the tag value: ")
 # this is the configration for the logger_for
 
 logger_for = logging.getLogger()
@@ -21,8 +24,8 @@ def custom_subnet(az, id, block):
             {
                 'ResourceType': 'subnet',
                 'Tags': [{
-                    'Key': 'Name',
-                    'Value': 'custom-subnet'
+                    'Key': Tag,
+                    'Value': Tag_Value
                 }]
             },
         ],
