@@ -1,48 +1,49 @@
+# By MuZakkir Saifi
 # import logging for get the logs in  execution
 import logging
 # import the boto3 which will use to interact  with the aws
 import boto3
 from botocore.exceptions import ClientError
-import json
 
-AWS_REGION = input("Please enter the AWS_REGION")
+REGION = input("Please enter the REGION: ")
+Tag=input("Enter the tag name: ")
+Tag_Value=input("Enter the tag value: ")
+# this is the configration for the logger_for
 
-# this is the configration for the logger
-
-logger = logging.getLogger()
+logger_for = logging.getLogger()
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s: %(levelname)s: %(message)s')
 
-vpc_resource = boto3.resource("ec2", region_name=AWS_REGION)
+client = boto3.resource("ec2", region_name=REGION)
 
 # this is the configuration for subnet
-def custom_subnet(az, vpc_id, cidr_block):
+def custom_subnet(az, id, block):
 
     try:
-        response = vpc_resource.create_subnet(TagSpecifications=[
+        response = client.create_subnet(TagSpecifications=[
             {
                 'ResourceType': 'subnet',
                 'Tags': [{
-                    'Key': 'Name',
-                    'Value': 'custom-subnet'
+                    'Key': Tag,
+                    'Value': Tag_Value
                 }]
             },
         ],
                                               AvailabilityZone=az,
-                                              VpcId=vpc_id,
-                                              CidrBlock=cidr_block)
+                                              VpcId=id,
+                                              CidrBlock=block)
 
     except ClientError:
-        logger.exception(f'Could not create a custom subnet.')
+        logger_for.exception(f'Oops sorry, Your custom subnet can not created:')
         raise
     else:
         return response
 
 
 if __name__ == '__main__':
-    CIDR_BLOCK = input('Enter the CIDR ')
-    VPC_ID = input('Enter the VPC ID')
-    AZ = input('Enter the availability zone')
-    logger.info(f'Creating a custom Subnet...')
-    custom_subnet = custom_subnet(AZ, VPC_ID, CIDR_BLOCK)
-    logger.info(f'Wow !!, Your Custom Subnet is created with Subnet ID: {custom_subnet.id}')
+    BLOCK = input('Enter the CIDR Block:  ')
+    ID = input('Enter the VPC ID: ')
+    Zone = input('Enter the availability zone:  ')
+    logger_for.info(f'Please wait your custom Subnet is creating...')
+    custom_subnet = custom_subnet(Zone, ID, BLOCK)
+    logger_for.info(f'Wow !!, Your Custom Subnet is created with Subnet ID: {custom_subnet.id}')
